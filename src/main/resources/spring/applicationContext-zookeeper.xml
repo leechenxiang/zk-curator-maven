@@ -30,8 +30,8 @@
 		<constructor-arg index="3" ref="retryPolicy" />
 	</bean>
 	
-	
-	<bean id="ZKLockWebUtil" class="com.itzixi.curator.utils.ZKLockWebUtil" scope="singleton" init-method="init">
+	<!-- 测试的时候这里使用多例，生产环节上使用默认单例即可 -->
+	<bean id="ZKLockWebUtil" class="com.itzixi.curator.utils.ZKLockWebUtil" init-method="init">
         <constructor-arg index="0" ref="client" />
     </bean>
 	
