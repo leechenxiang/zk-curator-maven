@@ -109,7 +109,7 @@ public class ZKLockWebUtil {
 	 * @date 2017年11月22日 下午1:15:58
 	 * @version V1.0
 	 */
-	public synchronized void getXLock() {
+	public void getXLock() {
 		// 使用这个死循环，当且仅当获得锁成功后才会跳出循环
 		while (true) {
 			try {
@@ -152,7 +152,7 @@ public class ZKLockWebUtil {
 	 * @date 2017年11月23日 下午1:35:53
 	 * @version V1.0
 	 */
-	public synchronized boolean getShareLock(int lockType, String identity) {
+	public boolean getShareLock(int lockType, String identity) {
 		// 对参数进行一些判断
 		// 锁拥有者不能为空
 		if (StringUtils.isEmpty(identity)) {
@@ -229,6 +229,7 @@ public class ZKLockWebUtil {
 			List<String> sequenList = new ArrayList<String>();
 			// 存放顺序和身份的map
 			Map<String,String> sequenIdentitysMap = new HashMap<String,String>();
+			// 循环解析节点名称, 放入map
 			for (String child : childrens) {
 				String splits[] = child.split("-");
 				sequenList.add(splits[1]);
