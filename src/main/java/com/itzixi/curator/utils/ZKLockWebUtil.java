@@ -144,7 +144,11 @@ public class ZKLockWebUtil {
 	 * @Description: 获得共享锁
 	 * 					参数：
 	 * 						lockType：锁类型，类型都在ZKLockTypeEnum这个枚举类中定义
+<<<<<<< HEAD
 	 * 						identity：身份，指的是当前锁的归属人。可以用调用的 方法名，或者ip 作为身份都行
+=======
+	 * 						identity：身份，指的是当前锁的归属人。可以用调用的 方面名 作为身份都行
+>>>>>>> branch 'master' of https://github.com/leechenxiang/zk-curator-maven
 	 * Copyright: Copyright (c) 2017
 	 * Company:FURUIBOKE.SCIENCE.AND.TECHNOLOGY
 	 * 
@@ -152,7 +156,11 @@ public class ZKLockWebUtil {
 	 * @date 2017年11月23日 下午1:35:53
 	 * @version V1.0
 	 */
+<<<<<<< HEAD
 	public synchronized boolean getShareLock(int lockType, String identity) {
+=======
+	public boolean getShareLock(int lockType, String identity) {
+>>>>>>> branch 'master' of https://github.com/leechenxiang/zk-curator-maven
 		// 对参数进行一些判断
 		// 锁拥有者不能为空
 		if (StringUtils.isEmpty(identity)) {
