@@ -3,11 +3,11 @@ package com.itzixi.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.itzixi.curator.utils.ZKLockTypeEnum;
 import com.itzixi.service.OrderService;
 
 @Controller
@@ -23,7 +23,8 @@ public class OrderController extends BaseController {
 	@ResponseBody
 	public String display1(int buyCounts){
 		
-		boolean falg = orderService.createOrder(buyCounts);
+//		boolean falg = orderService.createOrder(buyCounts);
+		boolean falg = orderService.createOrderSLockTest(ZKLockTypeEnum.READ.value, buyCounts);
 		return falg ? "buy success..." : "buy failed...";
 	}
 	
@@ -31,7 +32,8 @@ public class OrderController extends BaseController {
 	@ResponseBody
 	public String display2(int buyCounts){
 		
-		boolean falg = orderService.createOrder(buyCounts);
+//		boolean falg = orderService.createOrder(buyCounts);
+		boolean falg = orderService.createOrderSLockTest(ZKLockTypeEnum.WRITE.value, buyCounts);
 		return falg ? "buy success..." : "buy failed...";
 	}
 

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.itzixi.curator.utils.ZKLockTypeEnum;
 import com.itzixi.curator.utils.ZKLockWebUtil;
 import com.itzixi.mapper.ItemsMapper;
 import com.itzixi.mapper.OrdersMapper;
@@ -34,25 +35,27 @@ public class OrderServiceImpl implements OrderService {
 		// 加入分布式锁 - 排它锁
 //		ZKLockUtil.init("192.168.1.210:2181");
 //		ZKLockUtil.getXLock();
-		zkLockWebUtil.getXLock();
+//		zkLockWebUtil.getXLock();
 		
+		// 模拟商品服务
 		// 查询商品库存，库存够则可以购买，库存不够则不能购买
 		Items item = itemsMapper.selectByPrimaryKey("1");
 		if (item.getCounts() < buyCounts) {
 			log.info("{}的库存剩余{}件，用户需求量{}件，库存不足，订单创建失败...", item.getName(), item.getCounts(), buyCounts);
 			// 释放锁
 //			ZKLockUtil.releaseXLock();
-			zkLockWebUtil.releaseXLock();
+//			zkLockWebUtil.releaseXLock();
 			return false;
 		}
 		
 		// 模拟并发 
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(1000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		
+		// 模拟订单服务
 		// 创建订单
 		String oid = UUID.randomUUID().toString();
 		Orders o = new Orders();
@@ -71,7 +74,53 @@ public class OrderServiceImpl implements OrderService {
 		
 		// 释放锁
 //		ZKLockUtil.releaseXLock();
-		zkLockWebUtil.releaseXLock();
+//		zkLockWebUtil.releaseXLock();
+		
+		return true;
+	}
+	
+	@Override
+	public boolean createOrderSLockTest(int operator, int buyCounts) {
+		
+		// 加入分布式锁 - 共享锁
+		zkLockWebUtil.getShareLock(operator, "createOrderSLockTest");
+		
+		// 模拟商品服务
+		// 查询商品库存，库存够则可以购买，库存不够则不能购买
+		Items item = itemsMapper.selectByPrimaryKey("1");
+		if (item.getCounts() < buyCounts) {
+			log.info("{}的库存剩余{}件，用户需求量{}件，库存不足，订单创建失败...", item.getName(), item.getCounts(), buyCounts);
+			// 释放锁
+			zkLockWebUtil.releaseShareLock();
+			return false;
+		}
+		
+		// 模拟并发 
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		// 模拟订单服务
+		// 创建订单
+		String oid = UUID.randomUUID().toString();
+		Orders o = new Orders();
+		o.setId(oid);
+		o.setOrderNum(oid);
+		o.setItemId(item.getId());
+		ordersMapper.insert(o);
+		
+		// 减少库存
+		Items reduceItem = new Items();
+		reduceItem.setId("1");
+		reduceItem.setBuyCounts(buyCounts);
+		itemsMapper.reduceCounts(reduceItem);
+				
+		log.info("订单创建成功");
+		
+		// 释放锁
+		zkLockWebUtil.releaseShareLock();
 		
 		return true;
 	}
